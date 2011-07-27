@@ -1,0 +1,97 @@
+while getopts ":fhpcnNaAtTvVx+@Pd:" Option
+do
+  case $Option in
+    '@' )
+        ## HIDE_CONTEXT_NAMES starts at zero (false); increment it to one
+        ##   (true) the first time this flag is seen. Each time the flag
+        ##   is seen after that, increment it again so that an even
+        ##   number shows context names and an odd number hides context
+        ##   names.
+        : $(( HIDE_CONTEXT_NAMES++ ))
+        if [ $(( $HIDE_CONTEXT_NAMES % 2 )) -eq 0 ]
+        then
+            ## Zero or even value -- show context names
+            unset HIDE_CONTEXTS_SUBSTITUTION
+        else
+            ## One or odd value -- hide context names
+            export HIDE_CONTEXTS_SUBSTITUTION='[[:space:]]@[[:graph:]]\{1,\}'
+        fi
+        ;;
+    '+' )
+        ## HIDE_PROJECT_NAMES starts at zero (false); increment it to one
+        ##   (true) the first time this flag is seen. Each time the flag
+        ##   is seen after that, increment it again so that an even
+        ##   number shows project names and an odd number hides project
+        ##   names.
+        : $(( HIDE_PROJECT_NAMES++ ))
+        if [ $(( $HIDE_PROJECT_NAMES % 2 )) -eq 0 ]
+        then
+            ## Zero or even value -- show project names
+            unset HIDE_PROJECTS_SUBSTITUTION
+        else
+            ## One or odd value -- hide project names
+            export HIDE_PROJECTS_SUBSTITUTION='[[:space:]][+][[:graph:]]\{1,\}'
+        fi
+        ;;
+    a )
+        OVR_TODOTXT_AUTO_ARCHIVE=0
+        ;;
+    A )
+        OVR_TODOTXT_AUTO_ARCHIVE=1
+        ;;
+    c )
+        OVR_TODOTXT_PLAIN=0
+        ;;
+    d )
+        TODOTXT_CFG_FILE=$OPTARG
+        ;;
+    f )
+        OVR_TODOTXT_FORCE=1
+        ;;
+    h )
+        shorthelp
+        ;;
+    n )
+        OVR_TODOTXT_PRESERVE_LINE_NUMBERS=0
+        ;;
+    N )
+        OVR_TODOTXT_PRESERVE_LINE_NUMBERS=1
+        ;;
+    p )
+        OVR_TODOTXT_PLAIN=1
+        ;;
+    P )
+        ## HIDE_PRIORITY_LABELS starts at zero (false); increment it to one
+        ##   (true) the first time this flag is seen. Each time the flag
+        ##   is seen after that, increment it again so that an even
+        ##   number shows priority labels and an odd number hides priority
+        ##   labels.
+        : $(( HIDE_PRIORITY_LABELS++ ))
+        if [ $(( $HIDE_PRIORITY_LABELS % 2 )) -eq 0 ]
+        then
+            ## Zero or even value -- show priority labels
+            unset HIDE_PRIORITY_SUBSTITUTION
+        else
+            ## One or odd value -- hide priority labels
+            export HIDE_PRIORITY_SUBSTITUTION="([A-Z])[[:space:]]"
+        fi
+        ;;
+    t )
+        OVR_TODOTXT_DATE_ON_ADD=1
+        ;;
+    T )
+        OVR_TODOTXT_DATE_ON_ADD=0
+        ;;
+    v )
+        : $(( TODOTXT_VERBOSE++ ))
+        ;;
+    V )
+        version
+        ;;
+    x )
+        OVR_TODOTXT_DISABLE_FILTER=1
+        ;;
+  esac
+done
+shift $(($OPTIND - 1))
+

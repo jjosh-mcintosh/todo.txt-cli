@@ -1,0 +1,19 @@
+_addto() {
+    file="$1"
+    input="$2"
+    cleaninput
+
+    if [[ $TODOTXT_DATE_ON_ADD = 1 ]]; then
+        now=$(date '+%Y-%m-%d')
+        input=$(echo "$input" | sed -e 's/^\(([A-Z]) \)\{0,1\}/\1'"$now /")
+    fi
+    echo "$input" >> "$file"
+    if [ $TODOTXT_VERBOSE -gt 0 ]; then
+        TASKNUM=$(sed -n '$ =' "$file")
+        BASE=$(basename "$file")
+        PREFIX=$(echo ${BASE%%.[^.]*} | tr 'a-z' 'A-Z')
+        echo "$TASKNUM $input"
+        echo "${PREFIX}: $TASKNUM added."
+    fi
+}
+

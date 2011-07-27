@@ -1,0 +1,97 @@
+TODOTXT_VERBOSE=${TODOTXT_VERBOSE:-1}
+TODOTXT_PLAIN=${TODOTXT_PLAIN:-0}
+TODOTXT_CFG_FILE=${TODOTXT_CFG_FILE:-$HOME/.todo/config}
+TODOTXT_FORCE=${TODOTXT_FORCE:-0}
+TODOTXT_PRESERVE_LINE_NUMBERS=${TODOTXT_PRESERVE_LINE_NUMBERS:-1}
+TODOTXT_AUTO_ARCHIVE=${TODOTXT_AUTO_ARCHIVE:-1}
+TODOTXT_DATE_ON_ADD=${TODOTXT_DATE_ON_ADD:-0}
+TODOTXT_DEFAULT_ACTION=${TODOTXT_DEFAULT_ACTION:-}
+TODOTXT_SORT_COMMAND=${TODOTXT_SORT_COMMAND:-env LC_COLLATE=C sort -f -k2}
+TODOTXT_FINAL_FILTER=${TODOTXT_FINAL_FILTER:-cat}
+
+# Export all TODOTXT_* variables
+export ${!TODOTXT_@}
+
+# Default color map
+export NONE=''
+export BLACK='\\033[0;30m'
+export RED='\\033[0;31m'
+export GREEN='\\033[0;32m'
+export BROWN='\\033[0;33m'
+export BLUE='\\033[0;34m'
+export PURPLE='\\033[0;35m'
+export CYAN='\\033[0;36m'
+export LIGHT_GREY='\\033[0;37m'
+export DARK_GREY='\\033[1;30m'
+export LIGHT_RED='\\033[1;31m'
+export LIGHT_GREEN='\\033[1;32m'
+export YELLOW='\\033[1;33m'
+export LIGHT_BLUE='\\033[1;34m'
+export LIGHT_PURPLE='\\033[1;35m'
+export LIGHT_CYAN='\\033[1;36m'
+export WHITE='\\033[1;37m'
+export DEFAULT='\\033[0m'
+
+# Default priority->color map.
+export PRI_A=$YELLOW        # color for A priority
+export PRI_B=$GREEN         # color for B priority
+export PRI_C=$LIGHT_BLUE    # color for C priority
+export PRI_X=$WHITE         # color unless explicitly defined
+
+# Default highlight colors.
+export COLOR_DONE=$LIGHT_GREY   # color for done (but not yet archived) tasks
+
+# Default sentence delimiters for todo.sh append.
+# If the text to be appended to the task begins with one of these characters, no
+# whitespace is inserted in between. This makes appending to an enumeration
+# (todo.sh add 42 ", foo") syntactically correct.
+export SENTENCE_DELIMITERS=',.:;'
+
+[ -e "$TODOTXT_CFG_FILE" ] || {
+    CFG_FILE_ALT="$HOME/todo.cfg"
+
+    if [ -e "$CFG_FILE_ALT" ]
+    then
+        TODOTXT_CFG_FILE="$CFG_FILE_ALT"
+    fi
+}
+
+[ -e "$TODOTXT_CFG_FILE" ] || {
+    CFG_FILE_ALT="$HOME/.todo.cfg"
+
+    if [ -e "$CFG_FILE_ALT" ]
+    then
+        TODOTXT_CFG_FILE="$CFG_FILE_ALT"
+    fi
+}
+
+[ -e "$TODOTXT_CFG_FILE" ] || {
+    CFG_FILE_ALT=$(dirname "$0")"/todo.cfg"
+
+    if [ -e "$CFG_FILE_ALT" ]
+    then
+        TODOTXT_CFG_FILE="$CFG_FILE_ALT"
+    fi
+}
+
+
+if [ -z "$TODO_ACTIONS_DIR" -o ! -d "$TODO_ACTIONS_DIR" ]
+then
+    TODO_ACTIONS_DIR="$HOME/.todo/actions"
+    export TODO_ACTIONS_DIR
+fi
+
+[ -d "$TODO_ACTIONS_DIR" ] || {
+    TODO_ACTIONS_DIR_ALT="$HOME/.todo.actions.d"
+
+    if [ -d "$TODO_ACTIONS_DIR_ALT" ]
+    then
+        TODO_ACTIONS_DIR="$TODO_ACTIONS_DIR_ALT"
+    fi
+}
+
+# === SANITY CHECKS (thanks Karl!) ===
+[ -r "$TODOTXT_CFG_FILE" ] || die "Fatal Error: Cannot read configuration file $TODOTXT_CFG_FILE"
+
+. "$TODOTXT_CFG_FILE"
+
