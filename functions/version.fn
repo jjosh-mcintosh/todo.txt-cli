@@ -13,3 +13,8 @@ version() {
     exit 1
 }
 
+# Set script name and full path early.
+TODO_SH=$(basename "$0")
+TODO_FULL_SH="$0"
+export TODO_SH TODO_FULL_SH
+

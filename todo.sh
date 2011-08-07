@@ -3,15 +3,9 @@
 # === HEAVY LIFTING ===
 shopt -s extglob extquote
 
-# NOTE:  Todo.sh requires the .todo/config configuration file to run.
-# Place the .todo/config file in your home directory or use the -d option for a custom location.
+# NOTE:  Todo.sh requires the ~/.todo/config configuration file to run.
 
 . ./functions/version.fn
-
-# Set script name and full path early.
-TODO_SH=$(basename "$0")
-TODO_FULL_SH="$0"
-export TODO_SH TODO_FULL_SH
 
 oneline_usage="$TODO_SH [-fhpantvV] [-d todo_config] action [task_number] [task_description]"
 
@@ -33,17 +27,7 @@ cleanup() {
 
 . ./functions/replaceprepend.fn
 
-#Preserving environment variables so they don't get clobbered by the config file
-OVR_TODOTXT_AUTO_ARCHIVE="$TODOTXT_AUTO_ARCHIVE"
-OVR_TODOTXT_FORCE="$TODOTXT_FORCE"
-OVR_TODOTXT_PRESERVE_LINE_NUMBERS="$TODOTXT_PRESERVE_LINE_NUMBERS"
-OVR_TODOTXT_PLAIN="$TODOTXT_PLAIN"
-OVR_TODOTXT_DATE_ON_ADD="$TODOTXT_DATE_ON_ADD"
-OVR_TODOTXT_DISABLE_FILTER="$TODOTXT_DISABLE_FILTER"
-OVR_TODOTXT_VERBOSE="$TODOTXT_VERBOSE"
-OVR_TODOTXT_DEFAULT_ACTION="$TODOTXT_DEFAULT_ACTION"
-OVR_TODOTXT_SORT_COMMAND="$TODOTXT_SORT_COMMAND"
-OVR_TODOTXT_FINAL_FILTER="$TODOTXT_FINAL_FILTER"
+. ./defaults/ovr_vars.fn
 
 # == PROCESS OPTIONS ==
 . ./functions/process.fn
@@ -51,37 +35,6 @@ OVR_TODOTXT_FINAL_FILTER="$TODOTXT_FINAL_FILTER"
 # defaults if not yet defined
 . ./defaults/defaults.fn
 
-# === APPLY OVERRIDES
-if [ -n "$OVR_TODOTXT_AUTO_ARCHIVE" ] ; then
-  TODOTXT_AUTO_ARCHIVE="$OVR_TODOTXT_AUTO_ARCHIVE"
-fi
-if [ -n "$OVR_TODOTXT_FORCE" ] ; then
-  TODOTXT_FORCE="$OVR_TODOTXT_FORCE"
-fi
-if [ -n "$OVR_TODOTXT_PRESERVE_LINE_NUMBERS" ] ; then
-  TODOTXT_PRESERVE_LINE_NUMBERS="$OVR_TODOTXT_PRESERVE_LINE_NUMBERS"
-fi
-if [ -n "$OVR_TODOTXT_PLAIN" ] ; then
-  TODOTXT_PLAIN="$OVR_TODOTXT_PLAIN"
-fi
-if [ -n "$OVR_TODOTXT_DATE_ON_ADD" ] ; then
-  TODOTXT_DATE_ON_ADD="$OVR_TODOTXT_DATE_ON_ADD"
-fi
-if [ -n "$OVR_TODOTXT_DISABLE_FILTER" ] ; then
-  TODOTXT_DISABLE_FILTER="$OVR_TODOTXT_DISABLE_FILTER"
-fi
-if [ -n "$OVR_TODOTXT_VERBOSE" ] ; then
-  TODOTXT_VERBOSE="$OVR_TODOTXT_VERBOSE"
-fi
-if [ -n "$OVR_TODOTXT_DEFAULT_ACTION" ] ; then
-  TODOTXT_DEFAULT_ACTION="$OVR_TODOTXT_DEFAULT_ACTION"
-fi
-if [ -n "$OVR_TODOTXT_SORT_COMMAND" ] ; then
-  TODOTXT_SORT_COMMAND="$OVR_TODOTXT_SORT_COMMAND"
-fi
-if [ -n "$OVR_TODOTXT_FINAL_FILTER" ] ; then
-  TODOTXT_FINAL_FILTER="$OVR_TODOTXT_FINAL_FILTER"
-fi
 
 ACTION=${1:-$TODOTXT_DEFAULT_ACTION}
 
@@ -111,4 +64,5 @@ export -f cleaninput _list die
 
 # == HANDLE ACTION ==
 . ./functions/handle.fn
+
 cleanup
